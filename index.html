@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AJA | Perfumaria de Autoria</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400;500&family=Tenor+Sans&display=swap" rel="stylesheet">
+  
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+  <style>
+    /* VARIÁVEIS DE COR */
+    :root {
+      --avorio: #F1E8D6; --osso: #DDCFB2; --ocra: #C8964A; --terracotta: #B5532A;   
+      --marsala: #6B2B2B; --oliva: #5B4A3A; 
+      --inchiostro: #1F1610; --noir: #100807; --abismo: #050302;         
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--osso); 
+      color: var(--inchiostro);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 400; line-height: 1.05; }
+    .caps-label { font-family: 'Tenor Sans', sans-serif; text-transform: uppercase; letter-spacing: 0.25em; font-size: 0.75rem; }
+
+    /* MENU FIXO */
+    header {
+      position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+      background-color: rgba(16, 8, 7, 0.95); border-bottom: 1px solid rgba(221, 207, 178, 0.2);
+      z-index: 1000; opacity: 1; transform: translateY(0);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    header.hidden-scroll { opacity: 0; transform: translateY(-100%); pointer-events: none; }
+    .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; height: 100%; }
+    .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; letter-spacing: 0.2em; color: var(--avorio); text-decoration: none; }
+    
+    .nav-links { display: flex; gap: 30px; list-style: none; transition: all 0.3s ease; }
+    .nav-links a { color: var(--osso); text-decoration: none; transition: color 0.3s ease; }
+    .nav-links a:hover { color: var(--ocra); }
+    
+    .mobile-menu-btn { display: none; font-size: 1.8rem; color: var(--avorio); cursor: pointer; background: none; border: none; }
+
+    /* NARRATIVA EDITORIAL E HEROPAGE */
+    .narrative-section {
+      min-height: 100vh; 
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 100px 8%; position: relative;
+    }
+
+    .step-1 { background-color: var(--osso); color: var(--inchiostro); justify-content: center; padding-top: 120px;}
+    .hero-layout { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1200px; margin: 0 auto; gap: 40px; }
+    .hero-text { flex: 1; text-align: left; max-width: 600px; margin-left: 0; }
+    .hero-image-container { flex: 1.2; display: flex; justify-content: center; align-items: center; position: relative; }
+    
+    .geo-shape { position: absolute; pointer-events: none; z-index: 1; }
+    .geo-circle {
+      width: 450px; height: 450px;
+      border: 1px solid rgba(181, 83, 42, 0.15); 
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: slowRotate 40s linear infinite;
+    }
+    .geo-arch {
+      width: 300px; height: 500px;
+      border: 1px solid rgba(91, 74, 58, 0.15); 
+      border-radius: 150px 150px 0 0;
+      top: 10%; right: 10%;
+    }
+
+    @keyframes slowRotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .hero-annotation {
+      position: absolute;
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--oliva);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeSlideIn 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1s;
+      z-index: 10;
+    }
+    .anno-1 { top: 25%; left: 5%; }
+    .anno-2 { bottom: 25%; right: 5%; text-align: right; }
+    .anno-1::after { content: ''; position: absolute; width: 60px; height: 1px; background: var(--terracotta); top: 50%; left: 110%; transform: scaleX(0); transform-origin: left; animation: lineDraw 1.5s ease forwards 1.5s;}
+    .anno-2::before { content: ''; position: absolute; width: 60px; height: 1px; background: var(--terracotta); top: 50%; right: 110%; transform: scaleX(0); transform-origin: right; animation: lineDraw 1.5s ease forwards 1.5s;}
+
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes lineDraw { to { transform: scaleX(1); } }
+
+    .hero-perfume-img { max-width: 100%; height: auto; max-height: 75vh; filter: drop-shadow(0 30px 50px rgba(0,0,0,0.15)); transition: transform 1.5s ease, filter 1.5s ease; position: relative; z-index: 5; }
+    .hero-perfume-img:hover { transform: scale(1.03) translateY(-10px); filter: drop-shadow(0 40px 60px rgba(0,0,0,0.25)); }
+
+    .step-2 { background-color: var(--oliva); color: var(--avorio); }
+    .step-3 { background-color: var(--marsala); color: var(--avorio); justify-content: flex-start; text-align: left; }
+    .step-3 .reveal-content { text-align: left; margin-left: 0; margin-right: auto; }
+
+    .reveal-content {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 1.5s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+      max-width: 700px; text-align: right; margin-left: auto;
+    }
+    .reveal-content.is-visible { opacity: 1; transform: translateY(0); }
+    .hero-text.reveal-content { margin-left: 0; text-align: left; }
+
+    .section-num { color: var(--terracotta); margin-bottom: 20px; display: block; font-weight: bold; }
+    .narrative-title { font-size: 4.5rem; margin-bottom: 30px; letter-spacing: -0.02em; line-height: 1; }
+    .narrative-desc { font-size: 1.25rem; font-weight: 300; margin-bottom: 30px; }
+
+    /* VITRINE DE PRODUTOS E CARROSSEL SWIPER */
+    .product-showcase { 
+      background-color: var(--inchiostro); padding: 120px 5%; 
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center; 
+    }
+    .showcase-header { text-align: right; margin-bottom: 60px; max-width: 1050px; margin: 0 auto 40px auto; width: 100%; color: var(--avorio); }
+
+    .carousel-wrapper { position: relative; max-width: 1100px; margin: 0 auto; width: 100%; padding: 20px 0;}
+    
+    /* ALTERAÇÃO CHAVE AQUI: overflow: hidden para ocultar os perfumes laterais */
+    .swiper { width: 100%; overflow: hidden; padding: 40px 10px; } 
+    
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      height: auto;
+      cursor: pointer;
+    }
+
+    .product-card {
+      width: 100%; max-width: 320px; flex-shrink: 0; background-color: var(--noir); padding: 25px; position: relative;
+      border: 1px solid rgba(221, 207, 178, 0.05);
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease, border-color 0.6s ease, opacity 0.6s ease;
+    }
+
+    /* EFEITO DE SLIDE CENTRALIZADO */
+    .swiper-slide .product-card { opacity: 0.35; transform: scale(0.85); }
+    .swiper-slide-active .product-card { opacity: 1; transform: scale(1); cursor: default; }
+    .swiper-slide-active .product-card:hover { transform: scale(1.05) translateY(-10px); box-shadow: 0 25px 50px rgba(0,0,0,1); border-color: rgba(200, 150, 74, 0.4); z-index: 10; }
+    .swiper-slide:not(.swiper-slide-active) .btn-action { pointer-events: none; }
+
+    .image-container { position: relative; width: 100%; height: 350px; background-color: var(--abismo); display: flex; justify-content: center; align-items: center; margin-bottom: 25px; overflow: hidden; border: 1px solid rgba(91, 74, 58, 0.3); }
+    .perfume-img { position: relative; z-index: 2; max-width: 80%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6)); transition: transform 0.8s ease; }
+    .product-card:hover .perfume-img { transform: scale(1.1); }
+
+    .product-info { text-align: center; }
+    .product-title { color: var(--avorio); font-size: 1.8rem; margin-bottom: 8px; pointer-events: none;}
+    .product-price { color: var(--ocra); margin-bottom: 20px; pointer-events: none;}
+    
+    .btn-action { display: inline-block; background-color: var(--oliva); color: var(--avorio); padding: 12px 25px; text-decoration: none; border: none; cursor: pointer; width: 100%; transition: background-color 0.3s ease; text-align: center; font-size: 0.7rem;}
+    .btn-action:hover { background-color: var(--osso); color: var(--inchiostro); }
+
+    #contato .btn-action { background-color: var(--terracotta); color: var(--avorio); }
+    #contato .btn-action:hover { background-color: var(--osso); color: var(--inchiostro); }
+
+    .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(5, 3, 2, 0.9); color: var(--ocra); border: 1px solid var(--ocra); width: 50px; height: 50px; cursor: pointer; font-size: 1.2rem; z-index: 20; opacity: 0; transition: opacity 0.4s ease, background-color 0.4s ease, transform 0.3s ease; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
+    .carousel-wrapper:hover .carousel-btn { opacity: 1; }
+    .carousel-btn:hover { background-color: var(--ocra); color: var(--abismo); transform: translateY(-50%) scale(1.1); }
+    .btn-left { left: -10px; } .btn-right { right: -10px; }
+
+    /* QUIZ SECTION */
+    .quiz-section { min-height: 100vh; background-color: var(--noir); color: var(--avorio); display: flex; align-items: center; justify-content: center; padding: 100px 5%; }
+    .quiz-container { max-width: 1000px; width: 100%; text-align: center; }
+    .quiz-question { display: none; margin-bottom: 30px; animation: fadeIn 0.5s ease forwards; max-width: 600px; margin: 0 auto; }
+    .quiz-question.active { display: block; }
+    .quiz-title { font-size: 2.5rem; margin-bottom: 20px; color: var(--osso); }
+    
+    .quiz-options { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+    .quiz-btn { background-color: rgba(91, 74, 58, 0.1); border: 1px solid var(--oliva); color: var(--avorio); padding: 15px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 300; transition: all 0.3s ease; }
+    .quiz-btn:hover { background-color: var(--oliva); border-color: var(--ocra); color: var(--avorio); }
+
+    /* QUIZ RESULT COM CONSTELAÇÃO */
+    .quiz-result { display: none; animation: fadeIn 0.8s ease forwards; text-align: left; }
+    .quiz-result.active { display: flex; align-items: center; justify-content: space-between; gap: 50px; }
+    
+    .result-text-area { flex: 1; max-width: 500px; }
+    .result-text-area h3 { font-size: 3.5rem; color: var(--ocra); margin-bottom: 10px; }
+    .result-text-area p { margin-bottom: 30px; font-weight: 300; color: var(--osso); font-size: 1.1rem;}
+    
+    .constellation-area { flex: 1; position: relative; height: 400px; display: flex; justify-content: center; align-items: center; }
+    .main-result-img { width: 160px; z-index: 10; filter: drop-shadow(0 15px 25px rgba(200, 150, 74, 0.4)); transform: scale(1.1); }
+    .satellite-img { position: absolute; width: 60px; opacity: 0.35; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); transition: opacity 0.5s ease; }
+    .satellite-img:hover { opacity: 0.8; }
+    .sat-1 { top: 5%; left: 50%; transform: translateX(-50%); } .sat-2 { top: 25%; right: 15%; } .sat-3 { bottom: 25%; right: 15%; }
+    .sat-4 { bottom: 5%; left: 50%; transform: translateX(-50%); } .sat-5 { bottom: 25%; left: 15%; } .sat-6 { top: 25%; left: 15%; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* MODAIS COMUNS */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(5, 3, 2, 0.95); backdrop-filter: blur(15px); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; padding: 20px; }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content { background-color: var(--avorio); width: 100%; max-width: 1050px; max-height: 90vh; display: flex; border: 1px solid var(--osso); transform: translateY(40px) scale(0.95); transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.9); overflow: hidden; }
+    .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
+    .btn-close-modal { position: absolute; top: 20px; right: 25px; background: none; border: none; font-size: 2.5rem; color: var(--inchiostro); cursor: pointer; z-index: 20; line-height: 1; transition: transform 0.4s ease; font-weight: 300; }
+    .btn-close-modal:hover { transform: rotate(90deg); color: var(--terracotta); }
+
+    .modal-left { flex: 1; background-color: var(--abismo); display: flex; justify-content: center; align-items: center; padding: 60px; border-right: 1px solid var(--oliva); min-height: 400px; }
+    .modal-left img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 25px 40px rgba(0,0,0,0.8)); }
+    .modal-right { flex: 1.2; padding: 50px; display: flex; flex-direction: column; overflow-y: auto; max-height: 90vh; background: linear-gradient(to bottom, var(--avorio), var(--osso)); }
+    .modal-right::-webkit-scrollbar { width: 4px; } .modal-right::-webkit-scrollbar-track { background: transparent; } .modal-right::-webkit-scrollbar-thumb { background: var(--osso); }
+
+    .modal-tag { color: var(--terracotta); margin-bottom: 5px; display: block; font-weight: 500;}
+    .modal-right h2 { font-size: 3.5rem; color: var(--inchiostro); margin-bottom: 0; line-height: 1; }
+    .modal-price { font-size: 1.2rem; color: var(--marsala); margin-bottom: 20px; margin-top: 10px;}
+    .modal-desc { font-size: 1.05rem; color: var(--inchiostro); line-height: 1.8; margin-bottom: 10px; font-weight: 300;}
+    .modal-occasion { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.3rem; color: var(--oliva); display: block; margin-bottom: 30px; border-left: 2px solid var(--terracotta); padding-left: 15px;}
+
+    .modal-notes { background-color: var(--osso); padding: 25px; margin-bottom: 30px; border: 2px solid var(--ocra); border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+    .modal-note-item { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(91, 74, 58, 0.2); padding: 10px 0; font-size: 0.85rem;}
+    .modal-note-item:last-child { border-bottom: none; padding-bottom: 0;} .modal-note-item:first-child { padding-top: 0;}
+    .modal-note-label { color: var(--terracotta); font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em;}
+    .modal-note-value { color: var(--inchiostro); text-align: right; font-weight: 500;}
+
+    /* Formulários Internos & Alertas Visuais */
+    .form-layout { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
+    .form-layout input { padding: 15px; border: 1px solid var(--oliva); border-radius: 4px; background-color: var(--avorio); font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+    .form-row { display: flex; gap: 15px; } .form-row input { flex: 1; }
+    
+    .feedback-section { margin-top: auto; border-top: 1px solid rgba(91, 74, 58, 0.2); padding-top: 25px; margin-bottom: 25px; }
+    .feedback-section h4 { font-size: 1.5rem; margin-bottom: 5px; color: var(--inchiostro); }
+    .feedback-textarea { width: 100%; background-color: #ffffff; border: 2px solid var(--oliva); border-radius: 8px; color: var(--inchiostro); padding: 15px; font-family: 'Inter', sans-serif; font-size: 0.9rem; margin-bottom: 15px; resize: none; transition: all 0.3s ease; box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); }
+    .feedback-textarea:focus { outline: none; border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(181, 83, 42, 0.1); }
+    .btn-feedback { background-color: var(--oliva); margin-bottom: 20px; padding: 15px; border-radius: 4px;}
+    .btn-feedback:hover { background-color: var(--inchiostro); color: var(--avorio); }
+    
+    .btn-buy-modal { background-color: var(--inchiostro); color: var(--avorio); padding: 20px; text-align: center; border: none; cursor: pointer; transition: background-color 0.3s ease; border-radius: 4px; font-family: 'Tenor Sans', sans-serif; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; width: 100%; }
+    .btn-buy-modal:hover { background-color: var(--terracotta); }
+
+    /* Estilização das Caixas com Erro */
+    .error-input { border-color: var(--terracotta) !important; background-color: rgba(181, 83, 42, 0.05) !important; }
+    .error-placeholder::-webkit-input-placeholder { color: var(--terracotta) !important; font-weight: 500; opacity: 1;}
+    .error-placeholder::-moz-placeholder { color: var(--terracotta) !important; font-weight: 500; opacity: 1;}
+
+    /* RODAPÉ */
+    footer { background-color: var(--noir); color: var(--avorio); padding: 60px 5% 30px; border-top: 1px solid var(--oliva); }
+    .contact-container { display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; max-width: 1000px; margin: 0 auto 50px auto; text-align: left; }
+    .company-info { flex: 1; min-width: 280px; }
+    .company-info .narrative-title { font-size: 2rem; margin-bottom: 10px; color: var(--osso); }
+    .company-info p { color: var(--avorio); margin-bottom: 12px; font-size: 0.9rem; font-weight: 300;}
+    .contact-form { display: flex; flex-direction: column; gap: 15px; flex: 1; min-width: 280px; }
+    .contact-form input, .contact-form textarea { padding: 15px; border: 1px solid var(--oliva); background-color: rgba(255,255,255,0.02); color: var(--avorio); font-family: 'Inter', sans-serif; font-size: 0.9rem; transition: all 0.3s ease; }
+    .contact-form input::placeholder, .contact-form textarea::placeholder { color: rgba(221, 207, 178, 0.5); transition: color 0.3s ease; }
+    .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--ocra); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto; border-top: 1px solid rgba(91, 74, 58, 0.4); padding-top: 20px; flex-wrap: wrap; gap: 15px;}
+    .footer-bottom .logo { font-size: 1.8rem; letter-spacing: 0.1em; color: var(--osso); }
+    .footer-bottom .copyright { font-size: 0.65rem; color: var(--oliva); letter-spacing: 0.15em; }
+
+    /* RESPONSIVIDADE E OTIMIZAÇÃO MOBILE */
+    @media (max-width: 950px) { 
+      .carousel-btn { opacity: 1; } 
+      .quiz-result.active { flex-direction: column; text-align: center; gap: 20px;}
+      .constellation-area { height: 300px; width: 100%; }
+      .modal-right h2 { font-size: 2.8rem; }
+    }
+    
+    @media (max-width: 768px) {
+      .nav-container { padding: 0 20px; }
+      .mobile-menu-btn { display: block; }
+      .nav-links { position: absolute; top: 60px; left: 0; width: 100%; background-color: rgba(16, 8, 7, 0.98); flex-direction: column; gap: 20px; padding: 20px 0; text-align: center; border-bottom: 1px solid var(--oliva); transform: translateY(-150%); opacity: 0; pointer-events: none; }
+      .nav-links.active-menu { transform: translateY(0); opacity: 1; pointer-events: auto; }
+      .narrative-title { font-size: 2.8rem; } .narrative-desc { font-size: 1.1rem; }
+      .narrative-section { padding: 80px 5%; }
+      .hero-layout { flex-direction: column; text-align: center; gap: 20px;}
+      .hero-text, .hero-text.reveal-content { text-align: center; }
+      .hero-annotation, .geo-shape { display: none; }
+      .carousel-btn { display: none; } 
+      .modal-content { flex-direction: column; overflow-y: auto; max-height: 90vh;} 
+      .modal-left { min-height: 250px; padding: 20px; border-right: none; border-bottom: 1px solid var(--osso);}
+      .modal-right { padding: 30px 20px; overflow-y: visible; max-height: none; }
+      .modal-note-item { flex-direction: column; text-align: center; gap: 5px;}
+      .modal-note-value { text-align: center; }
+      .modal-occasion { border-left: none; border-top: 1px solid var(--terracotta); padding-left: 0; padding-top: 10px;}
+      .form-row { flex-direction: column; gap: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="smart-menu">
+    <nav class="nav-container">
+      <a href="#" class="logo">AJA</a>
+      <button class="mobile-menu-btn" id="mobileMenuBtn">&#9776;</button>
+      <ul class="nav-links caps-label" id="navLinks">
+        <li><a href="#tese">O Manifesto</a></li>
+        <li><a href="#produtos">A Coleção</a></li>
+        <li><a href="#quiz">Descubra</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="narrative-section step-1">
+    <div class="hero-layout">
+      <div class="hero-text reveal-content">
+        <span class="caps-label section-num">Abertura</span>
+        <h1 class="narrative-title">Seu cheiro vem <br>antes de você.</h1>
+        <p class="narrative-desc">A forma como você se apresenta é uma escolha. O perfume não é apenas um acessório, é o seu manifesto invisível. Qual marca você deseja tatuar na memória de quem cruza o seu caminho?</p>
+        <a href="#produtos" class="btn-action caps-label" style="display: inline-block; margin-top: 10px; width: auto; padding: 16px 35px; font-size: 0.8rem; border-radius: 4px;">Descubra a Coleção Autoral</a>
+      </div>
+      <div class="hero-image-container reveal-content" style="transition-delay: 0.3s;">
+        <div class="geo-shape geo-circle"></div>
+        <div class="geo-shape geo-arch"></div>
+        <div class="hero-annotation anno-1">Extrato de Parfum</div>
+        <div class="hero-annotation anno-2">Notas de Couro<br>& Âmbar Gris</div>
+        <img src="imagens/hero-perfume.png" alt="Obra de Destaque AJA" class="hero-perfume-img">
+      </div>
+    </div>
+  </section>
+
+  <section id="tese" class="narrative-section step-2">
+    <div class="reveal-content">
+      <span class="caps-label section-num">A Tese</span>
+      <h2 class="narrative-title">A intencionalidade <br>é a ponte.</h2>
+      <p class="narrative-desc">Quando você alinha o de dentro com o de fora de propósito, não veste um personagem: amplifica o que já é verdade.</p>
+      <p class="narrative-desc" style="font-size: 2rem; font-style: italic; color: var(--ocra); margin-top: 40px; font-family: 'Cormorant Garamond', serif;">"A presença é você, só que escolhida."</p>
+    </div>
+  </section>
+
+  <section class="narrative-section step-3">
+    <div class="reveal-content">
+      <span class="caps-label section-num" style="color: var(--osso);">O Anti-Público</span>
+      <h2 class="narrative-title">Não somos <br>para todos.</h2>
+      <p class="narrative-desc">AJA nasceu da recusa em agradar às massas. Não buscamos o consenso, mas a colisão. Criamos narrativas líquidas para indivíduos que repudiam o comum e escolhem a intencionalidade brutal. Se você procura apenas "cheirar bem", talvez seja melhor fechar esta página. Nossa arte exige postura.</p>
+    </div>
+  </section>
+
+  <section id="produtos" class="product-showcase step-4">
+    <div class="showcase-header reveal-content">
+      <span class="caps-label" style="color: var(--ocra);">Coleção Autoral</span>
+      <h2 class="narrative-title">Materialize sua intenção.</h2>
+    </div>
+
+    <!-- ESTRUTURA DO SWIPER CAROUSEL -->
+    <div class="carousel-wrapper reveal-content">
+      <button class="carousel-btn btn-left" id="btnLeft">&#10094;</button>
+      <button class="carousel-btn btn-right" id="btnRight">&#10095;</button>
+
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper" id="track">
+          
+          <div class="swiper-slide">
+            <div class="product-card">
+              <div class="image-container">
+                <img src="imagens/velvet-bloom.png" alt="Velvet Bloom" class="perfume-img">
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Velvet Bloom</h3>
+                <p class="caps-label product-price">R$ 210,00</p>
+                <button class="caps-label btn-action open-modal-btn" 
+                  data-title="Velvet Bloom" data-price="R$ 210,00"
+                  data-desc="Uma explosão aveludada de pétalas raras. Velvet Bloom brinca com contrastes, opondo a delicadeza de um buquê recém-colhido a um fundo denso e misterioso."
+                  data-occasion="Ocasião: Encontros noturnos e jantares intimistas." data-img="imagens/velvet-bloom.png"
+                  data-top="Rosa Búlgara, Pêssego" data-body="Jasmim Noturno, Peônia" data-base="Musk Branco, Âmbar">
+                  AJA com Intenção
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="product-card">
+              <div class="image-container">
+                <img src="imagens/solar-breeze.png" alt="Solar Breeze" class="perfume-img">
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Solar Breeze</h3>
+                <p class="caps-label product-price">R$ 189,00</p>
+                <button class="caps-label btn-action open-modal-btn" 
+                  data-title="Solar Breeze" data-price="R$ 189,00"
+                  data-desc="A energia vital capturada em um frasco translúcido. Solar Breeze abre com cítricos luminosos e vibrantes, evoluindo rapidamente para um calor reconfortante."
+                  data-occasion="Ocasião: Manhãs ensolaradas e compromissos diurnos." data-img="imagens/solar-breeze.png"
+                  data-top="Bergamota Italiana, Limão Siciliano" data-body="Flor de Laranjeira, Ylang-Ylang" data-base="Sândalo Dourado, Baunilha Seca">
+                  AJA com Intenção
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="product-card">
+              <div class="image-container">
+                <img src="imagens/soft-temptation.png" alt="Soft Temptation" class="perfume-img">
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Soft Temptation</h3>
+                <p class="caps-label product-price">R$ 235,00</p>
+                <button class="caps-label btn-action open-modal-btn" 
+                  data-title="Soft Temptation" data-price="R$ 235,00"
+                  data-desc="A sedução executada no silêncio. Um oriental especiado que entrelaça notas licorosas e resinas quentes, criando um rastro aveludado e visceral."
+                  data-occasion="Ocasião: Momentos de sedução e noites inesquecíveis." data-img="imagens/soft-temptation.png"
+                  data-top="Pimenta Rosa, Cereja Negra" data-body="Orquídea de Baunilha, Cacau" data-base="Patchouli, Tabaco Doce">
+                  AJA com Intenção
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="product-card">
+              <div class="image-container">
+                <img src="imagens/royal-cypress.png" alt="Royal Cypress" class="perfume-img">
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Royal Cypress</h3>
+                <p class="caps-label product-price">R$ 215,00</p>
+                <button class="caps-label btn-action open-modal-btn" 
+                  data-title="Royal Cypress" data-price="R$ 215,00"
+                  data-desc="A majestade da natureza selvagem. Verde, cortante e imponente, Royal Cypress assenta a mente e eleva o espírito."
+                  data-occasion="Ocasião: Reuniões de negócios e momentos de foco profundo." data-img="imagens/royal-cypress.png"
+                  data-top="Folhas de Cipreste, Olíbano" data-body="Cedro Atlas, Vetiver" data-base="Musgo de Carvalho, Couro Frio">
+                  AJA com Intenção
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="product-card">
+              <div class="image-container">
+                <img src="imagens/noir-azure.png" alt="Noir Azure" class="perfume-img">
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Noir Azure</h3>
+                <p class="caps-label product-price">R$ 250,00</p>
+                <button class="caps-label btn-action open-modal-btn" 
+                  data-title="Noir Azure" data-price="R$ 250,00"
+                  data-desc="A profundidade abissal e obscura. Denso, salgado e magnético, reservado para quem encontra conforto no inexplicável e na vastidão noturna."
+                  data-occasion="Ocasião: Eventos de gala e noites de introspecção." data-img="imagens/noir-azure.png"
+                  data-top="Acorde Salgado, Brisa Noturna" data-body="Algas Marinhas, Íris Escura" data-base="Âmbar Gris, Oud Submarino">
+                  AJA com Intenção
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="product-card">
+              <div class="image-container">
+                <img src="imagens/oceanis.png" alt="Oceanis" class="perfume-img">
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Oceanis</h3>
+                <p class="caps-label product-price">R$ 230,00</p>
+                <button class="caps-label btn-action open-modal-btn" 
+                  data-title="Oceanis" data-price="R$ 230,00"
+                  data-desc="A clareza cristalina de um mar infinito. Fresco, luminoso e revigorante, projetado para mentes que buscam a liberdade dos horizontes abertos."
+                  data-occasion="Ocasião: Viagens, fins de semana e dias livres." data-img="imagens/oceanis.png"
+                  data-top="Brisa do Mar, Bergamota" data-body="Lótus D'água, Sal Marinho" data-base="Cedro Branco, Almíscar Limpo">
+                  AJA com Intenção
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="product-card">
+              <div class="image-container">
+                <img src="imagens/ether-voyage.png" alt="Ether Voyage" class="perfume-img">
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">Ether Voyage</h3>
+                <p class="caps-label product-price">R$ 195,00</p>
+                <button class="caps-label btn-action open-modal-btn" 
+                  data-title="Ether Voyage" data-price="R$ 195,00"
+                  data-desc="Uma travessia acima do caos. Etéreo, translúcido e ozônico. Ether Voyage limpa o excesso e proporciona clareza absoluta."
+                  data-occasion="Ocasião: Uso diário, meditação e busca por clareza." data-img="imagens/ether-voyage.png"
+                  data-top="Acorde Ozônico, Chá Branco" data-body="Lírio do Vale, Algodão" data-base="Madeiras Brancas, Almíscar Transparente">
+                  AJA com Intenção
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ COM CONSTELAÇÃO -->
+  <section id="quiz" class="quiz-section">
+    <div class="quiz-container reveal-content">
+      
+      <div class="quiz-question active" id="q1">
+        <span class="caps-label" style="color: var(--terracotta); display: block; margin-bottom: 20px;">A Jornada Olfativa</span>
+        <h2 class="quiz-title">Onde sua mente descansa?</h2>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="setAnswer(1, 'fresh')">No silêncio das nuvens e na luz pálida</button>
+          <button class="quiz-btn" onclick="setAnswer(1, 'woody')">Na estrutura imutável de uma floresta antiga</button>
+          <button class="quiz-btn" onclick="setAnswer(1, 'dark')">Na profundidade obscura de águas não mapeadas</button>
+          <button class="quiz-btn" onclick="setAnswer(1, 'aqua')">Na clareza cristalina de um horizonte infinito</button>
+        </div>
+      </div>
+
+      <div class="quiz-question" id="q2">
+        <span class="caps-label" style="color: var(--terracotta); display: block; margin-bottom: 20px;">A Jornada Olfativa</span>
+        <h2 class="quiz-title">Qual é o rastro que você deixa?</h2>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="setAnswer(2, 'radiant')">Uma energia radiante que ilumina a sala</button>
+          <button class="quiz-btn" onclick="setAnswer(2, 'mystery')">Um mistério silencioso que atrai sem pedir</button>
+          <button class="quiz-btn" onclick="setAnswer(2, 'classic')">Uma assinatura clássica, densa e inesquecível</button>
+        </div>
+      </div>
+
+      <div class="quiz-result" id="quizResult">
+        <div class="result-text-area">
+          <span class="caps-label" style="color: var(--osso);">Sua Intenção Materializada</span>
+          <h3 id="resultName">Perfume</h3>
+          <p>Acreditamos que nenhuma escolha virtual substitui o toque da obra na sua pele. A verdadeira química só acontece na vivência. Sinta sua obra principal, ou aventure-se pelas outras nuances da coleção.</p>
+          <button id="btnDiscovery" class="btn-action caps-label" style="font-size: 0.9rem; padding: 20px 30px; width: auto; border-radius: 4px;">Receber o Discovery Set</button>
+        </div>
+        
+        <div class="constellation-area">
+          <img src="" id="mainResultImg" class="main-result-img" alt="Sua Obra Olfativa">
+          <img src="" class="satellite-img sat-1" alt="Satélite 1">
+          <img src="" class="satellite-img sat-2" alt="Satélite 2">
+          <img src="" class="satellite-img sat-3" alt="Satélite 3">
+          <img src="" class="satellite-img sat-4" alt="Satélite 4">
+          <img src="" class="satellite-img sat-5" alt="Satélite 5">
+          <img src="" class="satellite-img sat-6" alt="Satélite 6">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RODAPÉ E ÁREA DE CONTATO -->
+  <footer id="contato">
+    <div class="contact-container reveal-content">
+      <div class="company-info">
+        <h2 class="narrative-title">AJA Perfumaria</h2>
+        <p class="caps-label" style="color: var(--terracotta); margin-bottom: 15px;">Informações da Empresa</p>
+        <p><strong>CNPJ:</strong> 42.100.999/0001-88</p>
+        <p><strong>Sede:</strong> Atelier Olfativo, Rua do Ouro, 102 - RJ</p>
+        <p><strong>Comunicações:</strong> +55 21 9999-0000</p>
+        <p><strong>Concierge:</strong> intencao@ajaperfumaria.com.br</p>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <p class="caps-label" style="color: var(--terracotta); margin-bottom: 5px;">Como nossa obra ecoou em você?</p>
+        <input type="text" placeholder="Sua Assinatura (Nome)" class="aja-input" required>
+        <input type="email" placeholder="Onde a carta deve chegar (E-mail)" class="aja-input" required>
+        <textarea rows="4" placeholder="Deixe-nos saber qual foi a sua vivência com nossos acordes..." class="aja-input" required></textarea>
+        <button type="button" class="btn-action caps-label" style="border-radius: 4px;" onclick="submitFormWithValidation('contactForm', 'Gratidão', 'Recebemos suas palavras. Sua partilha reverbera em nossa arte.')">Partilhar com a AJA</button>
+      </form>
+    </div>
+    <div class="footer-bottom reveal-content">
+      <div class="logo">AJA</div>
+      <p class="caps-label copyright">&copy; 2026 AJA Perfumaria - A intencionalidade é a ponte.</p>
+    </div>
+  </footer>
+
+  <!-- MODAIS DE COMPRA E INFORMAÇÕES -->
+  <div class="modal-overlay" id="perfumeModal">
+    <div class="modal-content">
+      <button class="btn-close-modal" id="closeModal">&times;</button>
+      
+      <div class="modal-left">
+        <img src="" alt="Frasco de Perfume" id="modalImg">
+      </div>
+      
+      <div class="modal-right">
+        <span class="caps-label modal-tag">Obra Olfativa</span>
+        <h2 id="modalTitle">Nome do Perfume</h2>
+        <p class="caps-label modal-price" id="modalPrice">R$ 00,00</p>
+        
+        <p class="modal-desc" id="modalDesc">Descrição do perfume aparecerá aqui.</p>
+        <span class="modal-occasion" id="modalOccasion">Ocasião de uso</span>
+        
+        <div class="modal-notes">
+          <div class="modal-note-item"><span class="modal-note-label">Saída</span><span class="modal-note-value" id="modalTop">Notas de topo</span></div>
+          <div class="modal-note-item"><span class="modal-note-label">Corpo</span><span class="modal-note-value" id="modalBody">Notas de corpo</span></div>
+          <div class="modal-note-item"><span class="modal-note-label">Fundo</span><span class="modal-note-value" id="modalBase">Notas de fundo</span></div>
+        </div>
+
+        <div class="feedback-section">
+          <h4>Suas Impressões</h4>
+          <p class="caps-label" style="margin-bottom: 15px; color: var(--oliva); font-size: 0.65rem;">Seu relato intimista molda o nosso ofício.</p>
+          <textarea class="feedback-textarea aja-input" id="feedbackText" rows="2" placeholder="Como esta obra reagiu em sua pele?" required></textarea>
+          <button class="btn-action btn-feedback caps-label" onclick="submitFeedback()">Enviar Relato à AJA</button>
+        </div>
+
+        <button class="btn-buy-modal" id="btnBuyItem">Adicionar à Sua Presença</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-content" style="max-width: 600px; padding: 40px; display: block; overflow-y: auto; background-color: var(--avorio);">
+      <button class="btn-close-modal" id="closeCheckout">&times;</button>
+      <span class="caps-label modal-tag">Passo Final</span>
+      <h2 style="font-size: 2.5rem; color: var(--inchiostro); margin-bottom: 5px;">Sua Aquisição</h2>
+      <p style="color: var(--oliva); font-weight: 300; margin-bottom: 20px;">Preencha seus dados para receber a sua obra olfativa autoral.</p>
+      
+      <form class="form-layout" id="checkoutForm">
+        <input type="text" placeholder="Nome Completo" class="aja-input" required>
+        <input type="email" placeholder="E-mail" class="aja-input" required>
+        <div class="form-row">
+          <input type="text" placeholder="CPF" class="aja-input" required>
+          <input type="text" placeholder="Celular" class="aja-input" required>
+        </div>
+        <input type="text" placeholder="CEP" class="aja-input" required>
+        <div class="form-row">
+          <input type="text" placeholder="Rua / Avenida" class="aja-input" style="flex: 2;" required>
+          <input type="text" placeholder="Número" class="aja-input" style="flex: 1;" required>
+        </div>
+        <input type="text" placeholder="Complemento" class="aja-input">
+        <button type="button" class="btn-buy-modal" style="margin-top: 15px;" onclick="submitFormWithValidation('checkoutForm', 'Aquisição Confirmada', 'Sua obra olfativa autoral está a caminho. Bem-vindo(a) à AJA.')">Confirmar e Materializar</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="discoveryModal">
+    <div class="modal-content" style="max-width: 600px; padding: 40px; display: block; overflow-y: auto; background-color: var(--avorio);">
+      <button class="btn-close-modal" id="closeDiscovery">&times;</button>
+      <span class="caps-label modal-tag">Experiência Completa</span>
+      <h2 style="font-size: 2.5rem; color: var(--inchiostro); margin-bottom: 5px;">Discovery Set</h2>
+      <p style="color: var(--oliva); font-weight: 300; margin-bottom: 20px;">Informe o destino onde toda a nossa coleção será vivenciada por você.</p>
+      
+      <form class="form-layout" id="discoveryForm">
+        <input type="text" placeholder="Nome Completo" class="aja-input" required>
+        <input type="email" placeholder="E-mail" class="aja-input" required>
+        <input type="text" placeholder="CEP" class="aja-input" required>
+        <div class="form-row">
+          <input type="text" placeholder="Rua / Avenida" class="aja-input" style="flex: 2;" required>
+          <input type="text" placeholder="Número" class="aja-input" style="flex: 1;" required>
+        </div>
+        <input type="text" placeholder="Bairro" class="aja-input" required>
+        <div class="form-row">
+          <input type="text" placeholder="Cidade" class="aja-input" style="flex: 2;" required>
+          <input type="text" placeholder="Estado" class="aja-input" style="flex: 1;" required>
+        </div>
+        <button type="button" class="btn-buy-modal" style="margin-top: 15px; background-color: var(--oliva);" onclick="submitFormWithValidation('discoveryForm', 'Jornada Iniciada', 'O seu Discovery Set foi solicitado com sucesso e logo chegará em seu destino.')">Solicitar Envio</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TELA DE SUCESSO (AGRADECIMENTO GERAL) -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-content" style="max-width: 500px; padding: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background-color: var(--avorio);">
+      <button class="btn-close-modal" id="closeSuccess">&times;</button>
+      <span class="caps-label modal-tag" style="margin-bottom: 20px;">AJA Perfumaria</span>
+      <h2 style="font-size: 2.5rem; color: var(--inchiostro); margin-bottom: 15px;" id="successTitle">Obrigado</h2>
+      <p style="color: var(--oliva); font-weight: 300; font-size: 1.1rem;" id="successMessage">Sua ação foi concluída com sucesso.</p>
+      <button class="btn-buy-modal" style="margin-top: 30px; width: auto; padding: 15px 40px;" onclick="closeSuccessModal()">Retornar à Experiência</button>
+    </div>
+  </div>
+
+  <!-- Swiper JS Script -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+  <script>
+    // Reveal Animado
+    const revealElements = document.querySelectorAll('.reveal-content');
+    const observerOptions = { threshold: 0.2 }; 
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
+    }, observerOptions);
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // Lógica do Menu Mobile
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    mobileMenuBtn.addEventListener('click', () => { navLinks.classList.toggle('active-menu'); });
+    document.querySelectorAll('.nav-links a').forEach(link => { link.addEventListener('click', () => { navLinks.classList.remove('active-menu'); }); });
+
+    // Menu Inteligente
+    const menu = document.getElementById('smart-menu');
+    let timeout;
+    function hideMenu() { if (!menu.matches(':hover') && window.scrollY > 100 && !navLinks.classList.contains('active-menu')) menu.classList.add('hidden-scroll'); }
+    function showMenu() { menu.classList.remove('hidden-scroll'); }
+    window.addEventListener('scroll', () => { showMenu(); clearTimeout(timeout); timeout = setTimeout(hideMenu, 3000); });
+
+    // --- CARROSSEL INFINITO COM SWIPER (3 ITENS NO DESKTOP) ---
+    const swiper = new Swiper(".mySwiper", {
+      loop: true,
+      centeredSlides: true,
+      slideToClickedSlide: true,
+      spaceBetween: 30,
+      navigation: { nextEl: "#btnRight", prevEl: "#btnLeft" },
+      breakpoints: {
+        0: { slidesPerView: 1 },
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 } 
+      },
+    });
+
+    // SISTEMA DE MODAIS
+    const modalOverlay = document.getElementById('perfumeModal');
+    const checkoutModal = document.getElementById('checkoutModal');
+    const discoveryModal = document.getElementById('discoveryModal');
+    const successModal = document.getElementById('successModal');
+
+    // Abrir Modal Perfume
+    document.querySelectorAll('.open-modal-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('modalTitle').textContent = btn.dataset.title;
+        document.getElementById('modalPrice').textContent = btn.dataset.price;
+        document.getElementById('modalDesc').textContent = btn.dataset.desc;
+        document.getElementById('modalOccasion').textContent = btn.dataset.occasion;
+        document.getElementById('modalImg').src = btn.dataset.img;
+        document.getElementById('modalTop').textContent = btn.dataset.top;
+        document.getElementById('modalBody').textContent = btn.dataset.body;
+        document.getElementById('modalBase').textContent = btn.dataset.base;
+        
+        // Reseta o feedback para não carregar estados de erro anteriores
+        const fbText = document.getElementById('feedbackText');
+        fbText.value = "";
+        if(fbText.dataset.originalPlaceholder) fbText.placeholder = fbText.dataset.originalPlaceholder;
+        fbText.classList.remove('error-input', 'error-placeholder');
+
+        modalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // Fechar Modais
+    document.getElementById('closeModal').addEventListener('click', () => { modalOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; });
+    document.getElementById('closeCheckout').addEventListener('click', () => { checkoutModal.classList.remove('active'); document.body.style.overflow = 'auto'; });
+    document.getElementById('closeDiscovery').addEventListener('click', () => { discoveryModal.classList.remove('active'); document.body.style.overflow = 'auto'; });
+    document.getElementById('closeSuccess').addEventListener('click', closeSuccessModal);
+
+    // Navegação entre Modais
+    document.getElementById('btnBuyItem').addEventListener('click', () => {
+      modalOverlay.classList.remove('active'); 
+      setTimeout(() => { checkoutModal.classList.add('active'); }, 300);
+    });
+
+    document.getElementById('btnDiscovery').addEventListener('click', () => {
+      discoveryModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Fechar clicando fora
+    window.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
+      if (e.target === checkoutModal) { checkoutModal.classList.remove('active'); document.body.style.overflow = 'auto'; }
+      if (e.target === discoveryModal) { discoveryModal.classList.remove('active'); document.body.style.overflow = 'auto'; }
+      if (e.target === successModal) closeSuccessModal();
+    });
+
+    // --- FUNÇÕES DE SUCESSO E VALIDAÇÃO VISUAL ---
+    function showSuccessModal(title, message) {
+      document.getElementById('checkoutModal').classList.remove('active');
+      document.getElementById('discoveryModal').classList.remove('active');
+      document.getElementById('perfumeModal').classList.remove('active');
+      
+      document.getElementById('successTitle').innerText = title;
+      document.getElementById('successMessage').innerText = message;
+      
+      successModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSuccessModal() {
+      successModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Validador Visual para Inputs Individuais
+    function flagInputError(input, customMessage) {
+      input.value = "";
+      if (!input.dataset.originalPlaceholder) {
+        input.dataset.originalPlaceholder = input.placeholder;
+      }
+      input.placeholder = customMessage || "Aviso: Este campo é obrigatório.";
+      input.classList.add('error-input', 'error-placeholder');
+      
+      input.addEventListener('focus', function() {
+        this.placeholder = this.dataset.originalPlaceholder;
+        this.classList.remove('error-input', 'error-placeholder');
+      }, { once: true });
+    }
+
+    // Feedback do Modal de Produto
+    function submitFeedback() {
+      const textArea = document.getElementById('feedbackText');
+      if(textArea.value.trim() === "") { 
+        flagInputError(textArea, "Aviso: Digite seu relato antes de enviar.");
+        return; 
+      }
+      showSuccessModal("Relato Recebido", "Agradecemos a sua partilha. Sua percepção íntima foi enviada aos nossos perfumistas.");
+      textArea.value = "";
+    }
+
+    // Validação Genérica para os Formulários (Contato, Compra, Discovery)
+    function submitFormWithValidation(formId, successTitle, successMsg) {
+      const form = document.getElementById(formId);
+      const requiredInputs = form.querySelectorAll('input[required], textarea[required]');
+      let isValid = true;
+
+      requiredInputs.forEach(input => {
+        if(input.value.trim() === "") {
+          flagInputError(input, "Aviso: Preenchimento obrigatório.");
+          isValid = false;
+        }
+      });
+
+      if (!isValid) return;
+
+      showSuccessModal(successTitle, successMsg);
+      form.reset();
+    }
+
+    // Lógica do Quiz
+    let answer1 = ""; let answer2 = "";
+    const imageMap = {
+      'Ether Voyage': 'imagens/ether-voyage.png', 'Royal Cypress': 'imagens/royal-cypress.png',
+      'Noir Azure': 'imagens/noir-azure.png', 'Oceanis': 'imagens/oceanis.png',
+      'Solar Breeze': 'imagens/solar-breeze.png', 'Soft Temptation': 'imagens/soft-temptation.png',
+      'Velvet Bloom': 'imagens/velvet-bloom.png'
+    };
+
+    function setAnswer(step, value) {
+      if (step === 1) { answer1 = value; document.getElementById('q1').classList.remove('active'); document.getElementById('q2').classList.add('active'); }
+      else if (step === 2) { answer2 = value; calculateResult(); }
+    }
+
+    function calculateResult() {
+      let result = 'Velvet Bloom'; 
+      if (answer1 === 'fresh' && answer2 === 'radiant') result = 'Ether Voyage';
+      else if (answer1 === 'fresh' && answer2 === 'mystery') result = 'Soft Temptation';
+      else if (answer1 === 'fresh' && answer2 === 'classic') result = 'Ether Voyage';
+      else if (answer1 === 'woody' && answer2 === 'radiant') result = 'Solar Breeze';
+      else if (answer1 === 'woody' && answer2 === 'mystery') result = 'Royal Cypress';
+      else if (answer1 === 'woody' && answer2 === 'classic') result = 'Royal Cypress';
+      else if (answer1 === 'dark' && answer2 === 'radiant') result = 'Noir Azure';
+      else if (answer1 === 'dark' && answer2 === 'mystery') result = 'Noir Azure';
+      else if (answer1 === 'dark' && answer2 === 'classic') result = 'Velvet Bloom';
+      else if (answer1 === 'aqua' && answer2 === 'radiant') result = 'Solar Breeze';
+      else if (answer1 === 'aqua' && answer2 === 'mystery') result = 'Oceanis';
+      else if (answer1 === 'aqua' && answer2 === 'classic') result = 'Oceanis';
+
+      document.getElementById('q2').classList.remove('active');
+      document.getElementById('quizResult').classList.add('active');
+      document.getElementById('resultName').textContent = result;
+      document.getElementById('mainResultImg').src = imageMap[result];
+
+      const allPerfumes = Object.keys(imageMap);
+      const satellites = allPerfumes.filter(name => name !== result);
+      document.querySelectorAll('.satellite-img').forEach((el, index) => {
+        if(satellites[index]) el.src = imageMap[satellites[index]];
+      });
+    }
+  </script>
+</body>
+</html>
